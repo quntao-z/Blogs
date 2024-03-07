@@ -1,3 +1,6 @@
+const { test, describe } = require('node:test');
+const assert = require('node:assert');
+
 const listHelper = require('../utils/list_helper');
 
 describe('favorite blog', () => {
@@ -8,6 +11,6 @@ describe('favorite blog', () => {
   };
   test('find favorite blog with the most likes', () => {
     const result = listHelper.favoriteBlog(listHelper.blogList);
-    expect(result).toEqual(blog);
+    assert.deepStrictEqual(result, blog);
   });
 });
