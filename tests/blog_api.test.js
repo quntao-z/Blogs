@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test');
+const { test, after, beforeEach, expect } = require('node:test');
 const assert = require('node:assert');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
@@ -13,10 +13,9 @@ const { blogList } = listHelper;
 beforeEach(async () => {
   await Blog.deleteMany({});
 
-  for (const blog of blogList) {
-    const blogObject = new Blog(blog);
-    await blogObject.save();
-  }
+  const blogObjects = blogList.map((blog) => new Blog(blog));
+  const promiseBlogArray = blogObjects.map((blog) => blog.save());
+  await Promise.all(promiseBlogArray);
 });
 
 test('blogs are returned as json', async () => {
@@ -30,6 +29,12 @@ test('there are six notes', async () => {
   const response = await api.get('/api/blogs');
 
   assert.strictEqual(response.body.length, 6);
+});
+
+test('property id exist', async () => {
+  const response = await api.get('/api/blogs');
+
+  response.body.forEach((blog) => assert.ok(blog.id !== undefined, 'blog.id is not defined'));
 });
 
 after(async () => {
