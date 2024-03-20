@@ -1,4 +1,6 @@
-const { test, after, beforeEach, expect } = require('node:test');
+const {
+  test, after, beforeEach, expect,
+} = require('node:test');
 const assert = require('node:assert');
 const mongoose = require('mongoose');
 const supertest = require('supertest');
@@ -35,6 +37,23 @@ test('property id exist', async () => {
   const response = await api.get('/api/blogs');
 
   response.body.forEach((blog) => assert.ok(blog.id !== undefined, 'blog.id is not defined'));
+});
+
+test('api post', async () => {
+  const newBlog = new Blog({
+    _id: '5a422a851b54a676234d17fd',
+    title: 'Awesome Blog Post',
+    author: 'Awesome Author',
+    url: 'https://awesomeblog.com/',
+    likes: 10,
+    __v: 0,
+  });
+
+  await api.post('/api/blogs').send(newBlog.toJSON());
+
+  const response = await api.get('/api/blogs');
+
+  assert.strictEqual(response.body.length, 7);
 });
 
 after(async () => {
