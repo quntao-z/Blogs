@@ -30,7 +30,7 @@ test('blogs are returned as json', async () => {
 test('there are six notes', async () => {
   const response = await api.get('/api/blogs');
 
-  assert.strictEqual(response.body.length, 6);
+  assert.strictEqual(response.body.length, blogList.length);
 });
 
 test('property id exist', async () => {
@@ -39,7 +39,7 @@ test('property id exist', async () => {
   response.body.forEach((blog) => assert.ok(blog.id !== undefined, 'blog.id is not defined'));
 });
 
-test('api post', async () => {
+test('a valid blog can be added', async () => {
   const newBlog = new Blog({
     _id: '5a422a851b54a676234d17fd',
     title: 'Awesome Blog Post',
@@ -49,11 +49,34 @@ test('api post', async () => {
     __v: 0,
   });
 
-  await api.post('/api/blogs').send(newBlog.toJSON());
+  await api.post('/api/blogs').send(newBlog.toJSON()).expect(201).expect('Content-Type', /application\/json/);
 
   const response = await api.get('/api/blogs');
 
-  assert.strictEqual(response.body.length, 7);
+  const titles = response.body.map((blog) => blog.title);
+
+  assert.strictEqual(response.body.length, blogList.length + 1);
+
+  assert(titles.includes('Awesome Blog Post'));
+});
+
+test('blog without likes can be added', async () => {
+  const newBlog = new Blog({
+    _id: '5a422a851b54a676234d17fd',
+    title: 'Awesome Blog Post',
+    author: 'Awesome Author',
+    url: 'https://awesomeblog.com/',
+  });
+
+  await api.post('/api/blogs').send(newBlog.toJSON()).expect(201).expect('Content-Type', /application\/json/);
+
+  const response = await api.get('/api/blogs');
+
+  const titles = response.body.map((blog) => blog.title);
+
+  assert.strictEqual(response.body.length, blogList.length + 1);
+
+  assert(titles.includes('Awesome Blog Post'));
 });
 
 after(async () => {
