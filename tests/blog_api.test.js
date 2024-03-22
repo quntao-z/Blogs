@@ -79,6 +79,24 @@ test('blog without likes can be added', async () => {
   assert(titles.includes('Awesome Blog Post'));
 });
 
+test('blog without title or url are not added', async () => {
+  const newBlog = {
+    _id: '5a422a851b54a676234d17fd',
+    author: 'Awesome Author',
+    url: 'https://awesomeblog.com/',
+  }
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(400)
+
+  const response = await api.get('/api/blog')
+
+  assert.strictEqual(response.body.length, blogList.length)
+
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
