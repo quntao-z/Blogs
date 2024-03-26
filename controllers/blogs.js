@@ -9,19 +9,15 @@ blogsRouter.get('/', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const { body } = request;
 
-  if (body.title == null || body.url == null) {
-    response.status(400).json({ error: 'Title and URL are required' });
-  } else {
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: body.likes || 0,
-    });
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes || 0,
+  });
 
-    const savedBlog = await blog.save();
-    response.status(201).json(savedBlog);
-  }
+  const savedBlog = await blog.save();
+  response.status(201).json(savedBlog);
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
