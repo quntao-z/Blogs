@@ -1,4 +1,5 @@
 const lodash = require('lodash');
+const User = require('../models/user');
 
 const blogList = [
   {
@@ -51,6 +52,11 @@ const blogList = [
   },
 ];
 
+const usersInDb = async () => {
+  const users = await User.find({});
+  return users.map((user) => user.toJSON());
+};
+
 const totalLikes = (blogs) => {
   const sum = blogs.reduce((total, blog) => total + blog.likes, 0);
   return sum;
@@ -102,4 +108,5 @@ module.exports = {
   favoriteBlog,
   mostBlog,
   mostLikes,
+  usersInDb,
 };

@@ -18,6 +18,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: 'malformatted id' });
   } if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message });
+  } if (error.code === 11000) {
+    return response.status(400).json({ error: 'Username already taken' });
   }
 
   next(error);
